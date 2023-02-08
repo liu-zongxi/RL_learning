@@ -1,6 +1,7 @@
 import gym
-from CliffWalking.value_iteration import ValueIteration
-from CliffWalking.policy_iteration import PolicyIteration
+from DynamicProgramming.CliffWalking.value_iteration import ValueIteration
+
+
 def env_generator():
     env = gym.make("FrozenLake-v1")  # 创建环境
     env = env.unwrapped  # 解封装才能访问状态转移矩阵P
