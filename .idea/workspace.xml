@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="92be69a6-d66a-4b70-aa99-4008fa85a73a" name="变更" comment="更新了DQN，并写了详细注释">
-      <change afterPath="$PROJECT_DIR$/DQN/main_inverted_pendulum.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DQN/model/va_net.py" afterDir="false" />
+    <list default="true" id="92be69a6-d66a-4b70-aa99-4008fa85a73a" name="变更" comment="在DQN中添加了double和Dueling DQN">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DQN/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/DQN/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DQN/model/dqn.py" beforeDir="false" afterPath="$PROJECT_DIR$/DQN/model/dqn.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -227,6 +224,7 @@
       <workItem from="1675994084661" duration="21403000" />
       <workItem from="1676101779941" duration="5229000" />
       <workItem from="1676183023286" duration="65000" />
+      <workItem from="1676183403277" duration="258000" />
     </task>
     <task id="LOCAL-00001" summary="修改idea">
       <created>1675821954317</created>
@@ -249,7 +247,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676034291036</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="在DQN中添加了double和Dueling DQN">
+      <created>1676183600705</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1676183600706</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -271,6 +276,7 @@
     <MESSAGE value="修改idea" />
     <MESSAGE value="Qlearning和Sarsa" />
     <MESSAGE value="更新了DQN，并写了详细注释" />
-    <option name="LAST_COMMIT_MESSAGE" value="更新了DQN，并写了详细注释" />
+    <MESSAGE value="在DQN中添加了double和Dueling DQN" />
+    <option name="LAST_COMMIT_MESSAGE" value="在DQN中添加了double和Dueling DQN" />
   </component>
 </project>
