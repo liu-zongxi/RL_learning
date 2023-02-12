@@ -8,6 +8,7 @@ from DQN.model.replay_buffer import ReplayBuffer
 import matplotlib.pyplot as plt
 import rl_utils
 
+
 def main():
     lr = 2e-3
     num_episodes = 500

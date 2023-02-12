@@ -1,17 +1,28 @@
 import torch
 from DQN.model.q_net import Qnet
+from DQN.model.va_net import VAnet
 import numpy as np
 import torch.nn.functional as F
 class DQN:
     ''' DQN算法 '''
     def __init__(self, state_dim, hidden_dim, action_dim, learning_rate, gamma,
-                 epsilon, target_update, device):
+                 epsilon, target_update, device, dqn_type='VanillaDQN'):
         self.action_dim = action_dim    #
-        self.q_net = Qnet(state_dim, hidden_dim,
-                          self.action_dim).to(device)  # Q网络,训练网络
-        # 目标网络
-        self.target_q_net = Qnet(state_dim, hidden_dim,
-                                 self.action_dim).to(device)    # 目标网络
+        if dqn_type == 'DuelingDQN':  # Dueling DQN采取不一样的网络框架
+            self.q_net = VAnet(state_dim, hidden_dim,
+                               self.action_dim).to(device)
+            self.target_q_net = VAnet(state_dim, hidden_dim,
+                                      self.action_dim).to(device)
+        else:
+            self.q_net = Qnet(state_dim, hidden_dim,
+                              self.action_dim).to(device)
+            self.target_q_net = Qnet(state_dim, hidden_dim,
+                                     self.action_dim).to(device)
+        # self.q_net = Qnet(state_dim, hidden_dim,
+        #                   self.action_dim).to(device)  # Q网络,训练网络
+        # # 目标网络
+        # self.target_q_net = Qnet(state_dim, hidden_dim,
+        #                          self.action_dim).to(device)    # 目标网络
         # 使用Adam优化器
         self.optimizer = torch.optim.Adam(self.q_net.parameters(),
                                           lr=learning_rate) # Adam优化器
@@ -19,6 +30,7 @@ class DQN:
         self.epsilon = epsilon  # epsilon-贪婪策略
         self.target_update = target_update  # 目标网络更新频率
         self.count = 0  # 计数器,记录更新次数
+        self.dqn_type = dqn_type
         self.device = device
 
     def take_action(self, state):  # epsilon-贪婪策略采取动作
@@ -27,8 +39,13 @@ class DQN:
         else:
             state = torch.tensor([state], dtype=torch.float).to(self.device)
             action = self.q_net(state).argmax().item()  # 这里不用调用forward，而是直接调用getitem用括号就可以完成前向传播
+            # item直接把tensor变成正常的数,argmax给出的max的index
         return action
 
+    def max_q_value(self, state):
+        # state转为tensor并放入cuda
+        state = torch.tensor([state], dtype=torch.float).to(self.device)
+        return self.q_net(state).max().item()   # 做一次前向传播，得到训练网络的Qsa，选取最大的动作
     def update(self, transition_dict):
         # 将参数放入torch
         # 这里的view就是tensor的reshape，第一维是batch_size，第二维保持1，为一个列
@@ -46,11 +63,17 @@ class DQN:
         # 做batch_size次前向传播,结果是batchsize个两个action对应的输出
         # 利用gather的方式找到state分别对应的action得到的Qsa
         q_values = self.q_net(states).gather(1, actions)  # Q值
-        # 下个状态的最大Q值
-        # 使用next_states对target_q_net进行一次前向传播，选出在第一维上最大的，也就是action中最大的action对应的Qsa
-        # 后面的[0]是因为max会返回value和index，这里只取value，然后变成列的形式
-        max_next_q_values = self.target_q_net(next_states).max(1)[0].view(
-            -1, 1)
+        if self.dqn_type == 'DoubleDQN':  # DQN与Double DQN的区别
+            # 通过训练网络选出max_action，[1]是在取index
+            max_action = self.q_net(next_states).max(1)[1].view(-1, 1)
+            # 选择action后，使用Q_target sa来更新q_target
+            max_next_q_values = self.target_q_net(next_states).gather(1, max_action)
+        else:  # DQN的情况
+            # 下个状态的最大Q值
+            # 使用next_states对target_q_net进行一次前向传播，选出在第一维上最大的，也就是action中最大的action对应的Qsa
+            # 后面的[0]是因为max会返回value和index，这里只取value，然后变成列的形式
+            max_next_q_values = self.target_q_net(next_states).max(1)[0].view(
+                -1, 1)
         # DQN的更新公式，这是使用target_q_net得到的，他是Q-learning的简单推到
         q_targets = rewards + self.gamma * max_next_q_values * (1 - dones
                                                                 )  # TD误差目标
