@@ -75,6 +75,7 @@ class DQN:
             max_next_q_values = self.target_q_net(next_states).max(1)[0].view(
                 -1, 1)
         # DQN的更新公式，这是使用target_q_net得到的，他是Q-learning的简单推到
+        # 1-dones是因为最后一个状态不应该再更新q_targets
         q_targets = rewards + self.gamma * max_next_q_values * (1 - dones
                                                                 )  # TD误差目标
         # 计算loss，是更新后的目标Qsa和使用的Qsa的MSE
